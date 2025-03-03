@@ -1,6 +1,28 @@
----
-- name: Check system information
-  hosts: all
+- name: Setup Web Server and Deploy HTML Files
+  hosts: webservers
+  become: true
   tasks:
-    - name: Get system info
-      command: uname -a
+
+    - name: Install Apache Web Server
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Start Apache using service command
+      shell: |
+        service apache2 restart
+      args:
+        executable: /bin/bash
+
+    - name: Copy index.html to vm1
+      copy:
+        src: index1.html
+        dest: /var/www/html/index.html
+      when: inventory_hostname == "vm1"
+
+    - name: Copy index.html to vm2
+      copy:
+        src: index2.html
+        dest: /var/www/html/index.html
+      when: inventory_hostname == "vm2"

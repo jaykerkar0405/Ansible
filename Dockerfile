@@ -1,16 +1,21 @@
 FROM ubuntu:latest
 
-# Install SSH server and sudo
-RUN apt-get update && apt-get install -y openssh-server sudo
+# Install SSH, Apache, and utilities
+RUN apt update && apt install -y openssh-server apache2 sudo
 
-# Create SSH folder
-RUN mkdir /var/run/sshd
+# Create SSH directory for root and set correct permissions
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
 
-# Add ansible user with password
-RUN useradd -m ansible && echo "ansible:ansible" | chpasswd && adduser ansible sudo
+# Copy SSH public key (from build context) to authorized_keys
+COPY ansible_key.pub /root/.ssh/authorized_keys
+RUN chmod 600 /root/.ssh/authorized_keys
 
-# Expose SSH port
-EXPOSE 22
+# Enable SSH & Apache services
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
+    echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
 
-# Start SSH service
-CMD ["/usr/sbin/sshd", "-D"]
+# Expose SSH & Apache ports
+EXPOSE 22 80
+
+# Start SSH & Apache when container launches
+CMD service ssh start && service apache2 start && tail -f /dev/null
