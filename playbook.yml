@@ -1,0 +1,6 @@
+---
+- name: Check system information
+  hosts: all
+  tasks:
+    - name: Get system info
+      command: uname -a
