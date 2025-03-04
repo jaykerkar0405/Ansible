@@ -1,21 +1,30 @@
 FROM ubuntu:latest
 
-# Install SSH, Apache, and utilities
-RUN apt update && apt install -y openssh-server apache2 sudo
+# Install required packages (Apache, SSH, utilities)
+RUN apt update && apt install -y openssh-server apache2 sudo lsb-release
 
-# Create SSH directory for root and set correct permissions
+# Enable Apache CGI module
+RUN a2enmod cgi
+
+# Create CGI script directory and set permissions
+RUN mkdir -p /usr/lib/cgi-bin && chmod +x /usr/lib/cgi-bin
+
+# Add the CGI script inside the container
+COPY info.sh /usr/lib/cgi-bin/info.sh
+RUN chmod +x /usr/lib/cgi-bin/info.sh
+
+# Setup SSH keys
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
-
-# Copy SSH public key (from build context) to authorized_keys
 COPY ansible_key.pub /root/.ssh/authorized_keys
 RUN chmod 600 /root/.ssh/authorized_keys
 
-# Enable SSH & Apache services
+# Ensure Apache and SSH services start properly
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
-    echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
+    echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config && \
+    echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config
 
 # Expose SSH & Apache ports
 EXPOSE 22 80
 
-# Start SSH & Apache when container launches
+# Start services when the container launches
 CMD service ssh start && service apache2 start && tail -f /dev/null

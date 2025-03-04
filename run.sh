@@ -6,6 +6,10 @@ docker build -t ssh_ubuntu .
 echo "[+] Removing old containers (if any)..."
 docker rm -f vm1 vm2 2>/dev/null
 
+echo "[+] Removing old SSH keys to prevent conflicts..."
+ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[localhost]:5050" 2>/dev/null
+ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[localhost]:5051" 2>/dev/null
+
 echo "[+] Starting new VMs..."
 docker run -d --name vm1 -p 5050:22 -p 8081:80 ssh_ubuntu
 docker run -d --name vm2 -p 5051:22 -p 8082:80 ssh_ubuntu
