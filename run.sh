@@ -23,4 +23,4 @@ ansible-playbook -i inventory.ini playbook.yml
 echo "[+] Setup Complete!"
 echo "Access your web servers at:"
 echo "➡ VM1: https://redesigned-goldfish-pjwvqpwp4vp7hrrx7-8081.app.github.dev"
-echo "➡ VM2: https://redesigned-goldfish-pjwvqpwp4vp7hrrx7-8082.app.github.dev/"
+echo "➡ VM2: https://redesigned-goldfish-pjwvqpwp4vp7hrrx7-8082.app.github.dev"
