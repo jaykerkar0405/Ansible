@@ -8,7 +8,6 @@ An automated deployment solution that spins up two Docker containers running Apa
 - Apache web server configuration using Ansible
 - Dynamic system information display through CGI
 - Secure SSH access with key-based authentication
-- Modern UI with Tailwind CSS
 - Real-time container statistics
 
 ## 🛠️ Prerequisites
